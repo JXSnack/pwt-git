@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if globals.started %}
+{% if exists %}
+<p style="margin-bottom: 10px;">The username you picked is already in use</p>
+{% endif %}
+
+<form method="post" style="display: flex; flex-direction: column; gap: 10px;">
+    <input name="username" type="text" placeholder="Username">
+    <input type="submit" value="Join">
+</form>
+{% else %}
+<h1>What are you doing here?</h1>
+<p>The game has not yet started.</p>
+{% endif %}
+{% endblock %}

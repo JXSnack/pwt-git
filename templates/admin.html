@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if not globals.started %}
+<button class="beautiful" onclick="start();">Start</button>
+{% else %}
+<div class="game-info" id="game-info">
+    <h1>pwt.snackbag.net</h1>
+    <div>
+        <p>Members: <span id="connections">?</span></p>
+        <button style="margin: auto 20px 20px auto" onclick="fetch('/next-page')">Continue</button>
+    </div>
+</div>
+<d
+{% endif %}
+
+
+<script type="text/javascript">
+    const gameInfoElement = document.querySelector('#game-info');
+
+    async function start() {
+        await fetch('/start?key={{ globals.key }}');
+        location.reload();
+    }
+
+    async function updateGameData() {
+        let resp;
+        let gameData;
+
+        try {
+            resp = await fetch('/gamedata?key={{ globals.key }}');
+            gameData = await resp.json();
+        } catch {
+            location.reload();
+        }
+
+        document.querySelector('#connections').innerText = gameData['connections'];
+
+        if (gameData['state'] === 'image') {
+            gameInfoElement.style.display = 'none';
+        } else if (gameData['state'] === 'draw') {
+            gameInfoElement.style.display = 'none';
+        } else {
+            gameInfoElement.style.display = null;
+        }
+    }
+
+    async function boot() {
+        const ticker = setInterval(async () => {
+            await updateGameData();
+        }, 200);
+    }
+
+    {% if globals.started %}
+        boot();
+    {% endif %}
+</script>
+{% endblock %}

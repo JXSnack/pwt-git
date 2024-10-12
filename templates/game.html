@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>You're in!</h1>
+<p>Please wait for further instructions</p>
+
+<script type="text/javascript">
+    async function boot() {
+        const ticker = setInterval(async () => {
+            await updateGame();
+        }, 200);
+    }
+
+    async function updateGame() {
+        try {
+            const resp = await fetch('/handshake/{{ username }}');
+            const info = await resp.json();
+        } catch {
+            console.trace();
+            alert('Something went wrong while sending the handshake request.');
+            window.location.replace('/');
+        }
+    }
+
+    boot();
+</script>
+{% endblock %}
