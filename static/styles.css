@@ -204,6 +204,25 @@ canvas {
     border-radius: 0;
 }
 
+#username {
+    position: absolute;
+    display: flex;
+
+    align-items: center;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 30px;
+    background-color: white;
+    color: black;
+}
+
+#username p {
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
 @keyframes popin {
     from {
         right: 30px;
