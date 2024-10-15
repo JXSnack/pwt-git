@@ -71,19 +71,25 @@ def io_connect():
         Globals.user_data[request.sid] = {}
         Globals.game_data['connections'] += 1
         emit('client_connected', Globals.game_data['connections'], broadcast=True)
-        print(f"\033[1;34m[Y] Connected {Globals.game_data['connections']} \033[0m")
+        print(f"\033[1;34m[CONNECT] Connected {Globals.game_data['connections']}\033[0m")
     else:
         print("[X] Ignoring connection attempt from already established user")
 
 
 @socketio.on('disconnect')
 def io_disconnect():
-    if not Globals.started or not request.url.startswith(url_for("index")):
+    is_index = request.headers['Referer'].endswith(url_for("index"))
+    if not Globals.started or not is_index:
+        print(f"[X] Denied disconnection. {Globals.started=}@{request.headers['Referer']} ({is_index})")
         return
 
-    Globals.game_data['connections'] -= 1
-    emit('client_disconnected', Globals.game_data['connections'], broadcast=True)
-    print("disconnection ", Globals.game_data['connections'])
+    if Globals.user_data.get(request.sid) is not None:
+        Globals.game_data['connections'] -= 1
+        del Globals.user_data[request.sid]
+        emit('client_disconnected', Globals.game_data['connections'], broadcast=True)
+        print(f"\033[1;34m[DISCONNECT] Disconnecting {Globals.game_data['connections']}\033[0m")
+    else:
+        print("[X] Ignoring disconnection attempt from non established user")
 
 
 @socketio.on('my event')
