@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, emit
 from io import BytesIO
 from PIL import Image
 import base64
+from pathlib import Path
 
 import helper
 from helper import Globals
@@ -10,6 +11,8 @@ from helper import Globals
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "dev"
 socketio = SocketIO(app)
+
+Path("instance").mkdir(exist_ok=True, parents=True)
 
 
 @app.before_request
@@ -88,6 +91,21 @@ def io_connect():
         print("[X] Ignoring connection attempt from already established user")
 
 
+@socketio.on('identify')
+def io_identify(data):
+    is_index = request.headers['Referer'].endswith(url_for("index"))
+    if not Globals.started or not is_index:
+        print(f"[X] Denied identify. {Globals.started=}@{request.headers['Referer']} ({is_index})")
+        return
+
+    if Globals.user_data.get(request.sid) is not None:
+        Globals.user_data[request.sid] = {"username": data['username']}
+        Globals.user_data[data['username']] = request.sid
+        print(f"\033[1;34m[IDENTIFY] Identified {data['username']}\033[0m")
+    else:
+        print("[X] Ignoring identify attempt from a session that has not connected yet")
+
+
 @socketio.on('disconnect')
 def io_disconnect():
     is_index = request.headers['Referer'].endswith(url_for("index"))
@@ -104,12 +122,12 @@ def io_disconnect():
         print("[X] Ignoring disconnection attempt from non established user")
 
 
-@app.route("/save_image", methods=["POST"])
-def save_image():
+@app.route("/save_image/<username>", methods=["POST"])
+def save_image(username: str):
     data = request.json['image']
     image_data = base64.b64decode(data.split(',')[1])
     image = Image.open(BytesIO(image_data))
-    image.save('drawing.png')
+    image.save(f'instance/drawing-{username}.png')
     return "Image saved successfully!"
 
 
