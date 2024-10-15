@@ -139,10 +139,11 @@ def io_request_drawing():
 
 @app.route("/save_image/<username>", methods=["POST"])
 def save_image(username: str):
+    Path(f"instance/{Globals.game_data['round']}").mkdir(parents=True, exist_ok=True)
     data = request.json['image']
     image_data = base64.b64decode(data.split(',')[1])
     image = Image.open(BytesIO(image_data))
-    image.save(f'instance/drawing-{username}.png')
+    image.save(f'instance/{Globals.game_data['round']}/{username}.png')
     return "Image saved successfully!"
 
 
