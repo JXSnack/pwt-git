@@ -6,6 +6,8 @@ class Globals:
     user_data = {}
     game_data = {}
     started = False
+    timer_max = 30
+    timer_warn = 5
 
 
 def millis():

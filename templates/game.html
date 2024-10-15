@@ -139,7 +139,7 @@
         let drawing = false;
         let currentColor = "#000000";
         let brushSize = 5;
-        let drawingTimer = 30;
+        let drawingTimer = {{ globals.timer_max }};
         let currentPage = "zero";
 
         socket.emit('identify', {'username': "{{ username }}"});
@@ -237,18 +237,18 @@
 
         async function updateGame() {
             if (currentPage !== "draw") {
-                drawingTimer = 30;
+                drawingTimer = {{ globals.timer_max }};
                 return;
             }
 
             drawingTimer -= 0.2;
 
             if (drawingTimer < 0) {
-                drawingTimer = 30;
+                drawingTimer = {{ globals.timer_max }};
                 return;
             }
 
-            if (drawingTimer < 5) {
+            if (drawingTimer < {{ globals.timer_warn }}) {
                 timerElement.style.animation = 'shake 0.05s infinite'
             } else {
                 timerElement.style.animation = null;
