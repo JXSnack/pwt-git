@@ -59,47 +59,5 @@ def gamedata():
     return "Invalid permissions"
 
 
-@app.route('/handshake/<username>')
-def handshake(username: str):
-    if Globals.user_data.get(username) is None:
-        print("Failing handshake for not existing")
-        return "User does not exist"
-
-    Globals.user_data[username]['last_handshake'] = helper.millis()
-    return jsonify(Globals.user_data[username])
-
-
-@app.route('/next-page')
-def next_state():
-    if not Globals.started:
-        return "The game has not started yet"
-
-    Globals.game_data['page'] += 1
-    Globals.game_data['state'] = "image"
-    return "OK"
-
-
-def disconnect_user(user):
-    print("[X] Disconnecting " + user['username'])
-    username = user['username']
-    Globals.game_data['connections'] -= 1
-    del Globals.user_data[username]
-
-
-def threading_check():
-    check_ms = 2000
-
-    while True:
-        for user in copy.copy(list(Globals.user_data.keys())):
-            if helper.millis() - check_ms > Globals.user_data[user]['last_handshake']:
-                disconnect_user(Globals.user_data[user])
-
-        time.sleep(check_ms / 2 / 1000)
-
-
 if __name__ == "__main__":
-    app_thread = threading.Thread(target=lambda: app.run(debug=True, use_reloader=False))
-    app_thread.start()
-
-    handshake_thread = threading.Thread(target=lambda: threading_check())
-    handshake_thread.start()
+    app.run(debug=True)

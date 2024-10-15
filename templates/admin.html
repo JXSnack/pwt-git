@@ -10,7 +10,6 @@
         <button style="margin: auto 20px 20px auto" onclick="fetch('/next-page')">Continue</button>
     </div>
 </div>
-<d
 {% endif %}
 
 
@@ -23,25 +22,7 @@
     }
 
     async function updateGameData() {
-        let resp;
-        let gameData;
 
-        try {
-            resp = await fetch('/gamedata?key={{ globals.key }}');
-            gameData = await resp.json();
-        } catch {
-            location.reload();
-        }
-
-        document.querySelector('#connections').innerText = gameData['connections'];
-
-        if (gameData['state'] === 'image') {
-            gameInfoElement.style.display = 'none';
-        } else if (gameData['state'] === 'draw') {
-            gameInfoElement.style.display = 'none';
-        } else {
-            gameInfoElement.style.display = null;
-        }
     }
 
     async function boot() {

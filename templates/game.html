@@ -11,14 +11,7 @@
     }
 
     async function updateGame() {
-        try {
-            const resp = await fetch('/handshake/{{ username }}');
-            const info = await resp.json();
-        } catch {
-            console.trace();
-            alert('Something went wrong while sending the handshake request.');
-            window.location.replace('/');
-        }
+
     }
 
     boot();
