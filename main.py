@@ -17,7 +17,7 @@ socketio = SocketIO(
     async_mode='eventlet',
 #    logger=True,
 #    engineio_logger=True,
-    cors_allowed_origins="https://pwt.snackbag.net"
+    cors_allowed_origins=["https://pwt.snackbag.net", "http://127.0.0.1:5000"]
 )
 
 Path("instance").mkdir(exist_ok=True, parents=True)
