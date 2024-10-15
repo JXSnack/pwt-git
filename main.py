@@ -57,6 +57,7 @@ def start():
     if request.args.get("key") == Globals.key:
         Globals.started = True
         Globals.game_data["page"] = 0
+        Globals.game_data["round"] = 0
         Globals.game_data["state"] = 'start'
         Globals.game_data["connections"] = 0
         return "OK"

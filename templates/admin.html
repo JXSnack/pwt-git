@@ -6,7 +6,7 @@
         <div class="game-info" id="game-info">
             <h1>pwt.snackbag.net</h1>
             <div>
-                <p>Members: <span id="connections">?</span></p>
+                <p>Members: <span id="connections">?</span> - Round <span id="round">?</span>/5</p>
                 <button style="margin: auto 20px 20px auto" id="continue">Continue</button>
             </div>
         </div>
@@ -21,6 +21,7 @@
         const connectionsElement = document.querySelector('#connections');
         const continueButton = document.querySelector("#continue");
         const timerElement = document.querySelector("#timer");
+        const roundInfoElement = document.querySelector("#round");
 
         let currentPage = "zero";
         let drawTimer = {{ globals.timer_max }};
@@ -83,6 +84,7 @@
         async function boot() {
             const con = await (await fetch("/gamedata?key={{ globals.key }}")).json();
             connectionsElement.innerText = con['connections'];
+            roundInfoElement.innerText = con['round'] + 1;
 
             const ticker = setInterval(async () => {
                 await updateGameData();
