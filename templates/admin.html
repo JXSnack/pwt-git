@@ -32,6 +32,7 @@
                 socket.emit('set_page', "draw");
                 roundProgress = 1;
             } else if (roundProgress === 1) {
+                socket.emit('request_drawings');
                 socket.emit('set_page', "rating");
                 roundProgress = 2;
             } else {
