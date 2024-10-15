@@ -147,6 +147,15 @@ def save_image(username: str):
     return "Image saved successfully!"
 
 
+@app.route("/next_round")
+def next_round():
+    if not Globals.started:
+        return "Game has not yet started"
+
+    Globals.game_data["round"] += 1
+    return "OK"
+
+
 @socketio.on('save_drawing')
 def handle_save_drawing(data):
     emit('save_image', data, broadcast=True)

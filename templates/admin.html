@@ -24,10 +24,22 @@
         const roundInfoElement = document.querySelector("#round");
 
         let currentPage = "zero";
+        let roundProgress = 0;
         let drawTimer = {{ globals.timer_max }};
 
-        continueButton.addEventListener("click", (event) => {
-            socket.emit('set_page', "draw");
+        continueButton.addEventListener("click", async (event) => {
+            if (roundProgress === 0) {
+                socket.emit('set_page', "draw");
+                roundProgress = 1;
+            } else if (roundProgress === 1) {
+                socket.emit('set_page', "rating");
+                roundProgress = 2;
+            } else {
+                await fetch("/next_round");
+                await freshData();
+                socket.emit('set_page', "zero");
+                roundProgress = 0;
+            }
         });
 
         socket.on('client_connected', (amount) => {
@@ -48,7 +60,7 @@
                 setTimeout(() => {
                     socket.emit('request_drawing');
                     socket.emit('set_page', 'zero');
-                }, {{ globals.timer_max * 1000 }})
+                }, {{ globals.timer_max * 1000 }});
             } else {
                 gameInfoElement.style.display = null;
                 timerElement.style.display = "none";
@@ -82,10 +94,15 @@
             timerElement.innerText = parseInt(Math.ceil(drawTimer));
         }
 
+        async function freshData() {
+            const con = await (await fetch("/gamedata?key={{ globals.key }}")).json();
+            roundInfoElement.innerText = con['round'] + 1;
+        }
+
         async function boot() {
             const con = await (await fetch("/gamedata?key={{ globals.key }}")).json();
             connectionsElement.innerText = con['connections'];
-            roundInfoElement.innerText = con['round'] + 1;
+            await freshData();
 
             const ticker = setInterval(async () => {
                 await updateGameData();

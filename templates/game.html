@@ -8,6 +8,13 @@
         <p>Please wait for further instructions</p>
     </div>
 
+    <div id="ratingSection" style="display: none">
+        <h1>Click your favorite!</h1>
+        <p>You cannot change your choice later.</p>
+
+        <div id="ratingSectionImages"></div>
+    </div>
+
     <div id="drawingSection" style="display:none;">
         <canvas id="drawingCanvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
         <div>
@@ -135,6 +142,8 @@
         const ctx = canvas.getContext('2d');
         const drawingSection = document.getElementById('drawingSection');
         const noneSection = document.getElementById('noneSection');
+        const ratingSection = document.getElementById('ratingSection');
+        const ratingSectionImages = document.getElementById('ratingSectionImages');
         const noneTitle = document.getElementById('noneTitle');
         const timerElement = document.getElementById("timer");
         let drawing = false;
@@ -153,10 +162,17 @@
             if (page === "draw") {
                 drawingStartTime = Date.now();
                 noneSection.style.display = "none";
+                ratingSection.style.display = "none";
                 timerElement.style.display = null;
                 drawingSection.style.display = null;
+            } else if (page === "rating") {
+                noneSection.style.display = "none";
+                ratingSection.style.display = null;
+                timerElement.style.display = "none";
+                drawingSection.style.display = "none";
             } else {
                 noneSection.style.display = null;
+                ratingSection.style.display = "none";
                 timerElement.style.display = "none";
                 drawingSection.style.display = "none";
                 noneTitle.innerText = phrases[Math.floor(Math.random() * phrases.length)];
