@@ -7,17 +7,22 @@
     <h1>pwt.snackbag.net</h1>
     <div>
         <p>Members: <span id="connections">?</span></p>
-        <button style="margin: auto 20px 20px auto" onclick="fetch('/next-page')">Continue</button>
+        <button style="margin: auto 20px 20px auto" id="continue">Continue</button>
     </div>
 </div>
 {% endif %}
 
 
 <script type="text/javascript">
+    let socket = io();
+
     const gameInfoElement = document.querySelector('#game-info');
     const connectionsElement = document.querySelector('#connections');
+    const continueButton = document.querySelector("#continue");
+    continueButton.addEventListener("click", (event) => {
+        socket.emit('next_page');
+    });
 
-    let socket = io();
     socket.on('client_connected', (amount) => {
         connectionsElement.innerText = amount;
     });
