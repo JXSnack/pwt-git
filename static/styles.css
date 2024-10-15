@@ -188,8 +188,20 @@ canvas {
     cursor: default;
     user-select: none;
     animation: 0.2s popin;
-    overflow: hidden; /* Prevent overflow */
-    font-size: 18px; /* Responsive font size */
+    overflow: hidden;
+    font-size: 18px;
+}
+
+#timer.big {
+    --size: 150px;
+
+    top: calc(50vh - var(--size) / 2);
+    right: calc(50vw - var(--size) / 2);
+    height: var(--size);
+    width: var(--size);
+
+    font-size: 48px;
+    border-radius: 0;
 }
 
 @keyframes popin {
