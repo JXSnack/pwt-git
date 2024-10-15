@@ -1,15 +1,12 @@
-import copy
-import time
-from pathlib import Path
-import threading
-
-from flask import Flask, g, render_template, request, jsonify
+from flask import Flask, g, render_template, request, jsonify, redirect, url_for
+from flask_socketio import SocketIO, emit
 
 import helper
 from helper import Globals
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "dev"
+socketio = SocketIO(app)
 
 
 @app.before_request
@@ -17,7 +14,12 @@ def load_user():
     pass
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST", "FETCH", "DELETE", "PUT"])
+def _index():
+    return redirect(url_for("index"))
+
+
+@app.route("/game", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         if not Globals.started:
@@ -59,5 +61,30 @@ def gamedata():
     return "Invalid permissions"
 
 
+@socketio.on('connect', '/game')
+def io_connect():
+    if not Globals.started:
+        return
+
+    Globals.game_data['connections'] += 1
+    emit('client_connected', Globals.game_data['connections'], broadcast=True)
+    print("connection", Globals.game_data['connections'])
+
+
+@socketio.on('disconnect', '/game')
+def io_disconnect():
+    if not Globals.started:
+        return
+
+    Globals.game_data['connections'] -= 1
+    emit('client_disconnected', Globals.game_data['connections'], broadcast=True)
+    print("disconnection ", Globals.game_data['connections'])
+
+
+@socketio.on('my event')
+def handle_custom_event(json: dict):
+    print('recv event: ' + str(json))
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, allow_unsafe_werkzeug=True, debug=True)

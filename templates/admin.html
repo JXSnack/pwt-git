@@ -6,7 +6,7 @@
 <div class="game-info" id="game-info">
     <h1>pwt.snackbag.net</h1>
     <div>
-        <p>Members: <span id="connections">?</span></p>
+        <p>Members: <span id="connections">0</span></p>
         <button style="margin: auto 20px 20px auto" onclick="fetch('/next-page')">Continue</button>
     </div>
 </div>
@@ -15,6 +15,16 @@
 
 <script type="text/javascript">
     const gameInfoElement = document.querySelector('#game-info');
+    const connectionsElement = document.querySelector('#connections');
+
+    let socket = io();
+    socket.on('client_connected', (amount) => {
+        connectionsElement.innerText = amount;
+    });
+
+    socket.on('client_disconnected', (amount) => {
+        connectionsElement.innerText = amount;
+    });
 
     async function start() {
         await fetch('/start?key={{ globals.key }}');

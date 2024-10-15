@@ -4,6 +4,8 @@
 <p>Please wait for further instructions</p>
 
 <script type="text/javascript">
+    let socket = io();
+
     async function boot() {
         const ticker = setInterval(async () => {
             await updateGame();
