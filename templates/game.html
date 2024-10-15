@@ -1,28 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>You're in!</h1>
-    <p>Please wait for further instructions</p>
+    <div id="noneSection">
+        <h1 id="noneTitle">You're in!</h1>
+        <p>Please wait for further instructions</p>
+    </div>
 
-    <!-- Drawing section, hidden by default -->
     <div id="drawingSection" style="display:none;">
         <canvas id="drawingCanvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
-        <br>
-        <label for="colorPicker">Pick a color:</label>
-        <select id="colorPicker">
-            <option value="#000000">Black</option>
-            <option value="#FF0000">Red</option>
-            <option value="#00FF00">Green</option>
-            <option value="#0000FF">Blue</option>
-            <option value="#FFFF00">Yellow</option>
-            <option value="#FF00FF">Magenta</option>
-            <option value="#00FFFF">Cyan</option>
-            <option value="#FFFFFF">White</option>
-        </select>
-        <br>
-        <label for="brushSize">Brush Size:</label>
-        <input type="range" id="brushSize" min="1" max="20" value="5">
-        <br>
-        <button onclick="saveDrawing()">Save Drawing</button>
+        <div>
+            <div class="draw-parts">
+                <div class="draw-part">
+                    <label for="colorPicker">Pick a color:</label>
+                    <select id="colorPicker">
+                        <option value="#000000">Black</option>
+                        <option value="#FF0000">Red</option>
+                        <option value="#00FF00">Green</option>
+                        <option value="#0000FF">Blue</option>
+                        <option value="#FFFF00">Yellow</option>
+                        <option value="#FF00FF">Magenta</option>
+                        <option value="#00FFFF">Cyan</option>
+                        <option value="#FFFFFF">White</option>
+                    </select>
+                </div>
+                <div class="draw-part">
+                    <label for="brushSize">Brush Size:</label>
+                    <input type="range" id="brushSize" min="1" max="20" value="5">
+                </div>
+            </div>
+            <button onclick="saveDrawing()">Already finished!</button>
+        </div>
     </div>
 
     <script type="text/javascript">
@@ -30,18 +36,22 @@
         const canvas = document.getElementById('drawingCanvas');
         const ctx = canvas.getContext('2d');
         const drawingSection = document.getElementById('drawingSection');
+        const noneSection = document.getElementById('noneSection');
         let drawing = false;
         let currentColor = "#000000";
         let brushSize = 5;
 
+        socket.emit('identify', {'username': "{{ username }}"});
+
         drawingSection.style.display = "none";
 
         socket.on('next_page', () => {
+            noneSection.style.display = "none";
             drawingSection.style.display = "block";
         });
 
         canvas.addEventListener('mousedown', () => drawing = true);
-        canvas.addEventListener('mouseup', () => {
+        window.addEventListener('mouseup', () => {
             drawing = false;
             ctx.beginPath();
         });
@@ -60,7 +70,7 @@
             const rect = canvas.getBoundingClientRect();
 
             ctx.strokeStyle = currentColor;
-            ctx.lineWidth = brushSize;
+            ctx.lineWidth = brushSize * 2;
             ctx.lineCap = 'round';
 
             ctx.lineTo(event.clientX - rect.left, event.clientY - rect.top);
@@ -73,7 +83,7 @@
             const image = canvas.toDataURL('image/png');
             socket.emit('save_drawing', {image: image});
 
-            fetch('/save_image', {
+            fetch('/save_image/{{ username }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
