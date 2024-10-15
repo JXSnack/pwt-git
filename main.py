@@ -1,5 +1,8 @@
 from flask import Flask, g, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO, emit
+from io import BytesIO
+from PIL import Image
+import base64
 
 import helper
 from helper import Globals
@@ -101,9 +104,18 @@ def io_disconnect():
         print("[X] Ignoring disconnection attempt from non established user")
 
 
-@socketio.on('my event')
-def handle_custom_event(json: dict):
-    print('recv event: ' + str(json))
+@app.route("/save_image", methods=["POST"])
+def save_image():
+    data = request.json['image']
+    image_data = base64.b64decode(data.split(',')[1])
+    image = Image.open(BytesIO(image_data))
+    image.save('drawing.png')
+    return "Image saved successfully!"
+
+
+@socketio.on('save_drawing')
+def handle_save_drawing(data):
+    emit('save_image', data, broadcast=True)
 
 
 if __name__ == "__main__":
