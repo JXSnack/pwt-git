@@ -157,8 +157,10 @@
         drawingSection.style.display = "none";
 
         socket.on('rating_data', data => {
+            ratingSectionImages.innerHTML = "";
+
             for (let user of data['users']) {
-                ratingSectionImages.innerHTML += `<img draggable=false src='/drawing/${user}'/>`
+                ratingSectionImages.innerHTML += `<img draggable=false src='/drawing/${user}?t=${Date.now()}'/>`
             }
         });
 
