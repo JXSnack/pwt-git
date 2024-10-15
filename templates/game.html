@@ -6,6 +6,21 @@
 <script type="text/javascript">
     let socket = io();
 
+    socket.on('connect_error', (error) => {
+        alert("An unknown error occurred while trying to connect to the server. Please log in again or start a new game.");
+        window.location.replace("/");
+    });
+
+    socket.on('connect_timeout', (timeout) => {
+        alert("Your connection timed out. Please log in again or start a new game.");
+        window.location.replace("/");
+    });
+
+    socket.on('reconnect_failed', (error) => {
+        alert("An unknown error occurred while trying to REconnect to the server. Please log in again or start a new game.");
+        window.location.replace("/");
+    });
+
     async function boot() {
         const ticker = setInterval(async () => {
             await updateGame();
