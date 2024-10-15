@@ -6,7 +6,7 @@
 <div class="game-info" id="game-info">
     <h1>pwt.snackbag.net</h1>
     <div>
-        <p>Members: <span id="connections">0</span></p>
+        <p>Members: <span id="connections">?</span></p>
         <button style="margin: auto 20px 20px auto" onclick="fetch('/next-page')">Continue</button>
     </div>
 </div>
@@ -36,6 +36,9 @@
     }
 
     async function boot() {
+        const con = await (await fetch("/gamedata?key={{ globals.key }}")).json();
+        connectionsElement.innerText = con['connections'];
+
         const ticker = setInterval(async () => {
             await updateGameData();
         }, 200);
