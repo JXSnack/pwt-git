@@ -209,9 +209,10 @@
             })
                 .then(response => response.text())
                 .then(data => {
-                    alert(data);
+                    console.log("submitted drawing");
                 })
                 .catch(error => {
+                    alert("Please yell out loud. Something went really, really, really wrong.\n\n" + error);
                     console.error('Error:', error);
                 });
         }
@@ -229,6 +230,10 @@
         socket.on('reconnect_failed', (error) => {
             alert("An unknown error occurred while trying to REconnect to the server. Please log in again or start a new game.");
             window.location.replace("/");
+        });
+
+        socket.on('request_drawing', () => {
+            saveDrawing();
         });
 
         async function boot() {

@@ -46,6 +46,7 @@
                 timerElement.style.display = null;
 
                 setTimeout(() => {
+                    socket.emit('request_drawing');
                     socket.emit('set_page', 'zero');
                 }, {{ globals.timer_max * 1000 }})
             } else {

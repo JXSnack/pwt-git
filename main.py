@@ -132,6 +132,11 @@ def io_disconnect():
         print("[X] Ignoring disconnection attempt from non established user")
 
 
+@socketio.on('request_drawing')
+def io_request_drawing():
+    emit("request_drawing", broadcast=True)
+
+
 @app.route("/save_image/<username>", methods=["POST"])
 def save_image(username: str):
     data = request.json['image']
