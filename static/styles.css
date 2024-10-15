@@ -102,6 +102,12 @@ button.beautiful:hover {
     transform: rotate(10deg) scale(1.5);
 }
 
+#noneSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .game-info {
     height: 100%;
     width: 100%;
