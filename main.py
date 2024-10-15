@@ -28,7 +28,6 @@ def index():
         if request.form.get("username") in Globals.user_data.keys():
             return render_template("index.html", exists=True, globals=Globals)
 
-        Globals.game_data['connections'] += 1
         Globals.user_data[request.form['username']] = {"last_handshake": helper.millis(), "username": request.form['username']}
         return render_template("game.html", globals=Globals, username=request.form['username'])
     return render_template("index.html", exists=False, globals=Globals)
@@ -61,19 +60,25 @@ def gamedata():
     return "Invalid permissions"
 
 
-@socketio.on('connect', '/game')
+@socketio.on('connect')
 def io_connect():
-    if not Globals.started:
+    is_index = request.headers['Referer'].endswith(url_for("index"))
+    if not Globals.started or not is_index:
+        print(f"[X] Denied connection. {Globals.started=}@{request.headers['Referer']} ({is_index})")
         return
 
-    Globals.game_data['connections'] += 1
-    emit('client_connected', Globals.game_data['connections'], broadcast=True)
-    print("connection", Globals.game_data['connections'])
+    if Globals.user_data.get(request.sid) is None:
+        Globals.user_data[request.sid] = {}
+        Globals.game_data['connections'] += 1
+        emit('client_connected', Globals.game_data['connections'], broadcast=True)
+        print(f"\033[1;34m[Y] Connected {Globals.game_data['connections']} \033[0m")
+    else:
+        print("[X] Ignoring connection attempt from already established user")
 
 
-@socketio.on('disconnect', '/game')
+@socketio.on('disconnect')
 def io_disconnect():
-    if not Globals.started:
+    if not Globals.started or not request.url.startswith(url_for("index")):
         return
 
     Globals.game_data['connections'] -= 1
