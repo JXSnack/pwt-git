@@ -33,10 +33,106 @@
 
     <script type="text/javascript">
         let socket = io();
+        const phrases = [
+            "Was that too fast?",
+            "Interesting drawing...",
+            "LISTEN. NOW!",
+            "Oops, did I just say that out loud?",
+            "Wait, what the hell are you drawing?",
+            "You call that art? I call it a disaster!",
+            "I hope you have a plan because this looks chaotic",
+            "Pro tip: less is more, but who am I to judge?",
+            "Do you need a tutorial, or are you just winging it?",
+            "Let me guess, Picasso was your inspiration?",
+            "Wow, I didn't know abstract meant 'I have no idea!'",
+            "Is this a drawing or a modern art statement?",
+            "Maybe the real art was the friends we made along the way",
+            "I could stare at this for hours... and still be confused",
+            "Can we pretend this was meant to be a joke?",
+            "Congrats! You just created something truly unique",
+            "Remember, every masterpiece starts with a terrible sketch",
+            "I feel like I should charge you for this therapy session.",
+            "Are we sure this isn't just a series of happy accidents?",
+            "Brace yourself, art critics will be on their way",
+            "Looks like someone got their crayons mixed up",
+            "If art is subjective, this is still a hard pass",
+            "Did you draw this with your eyes closed?",
+            "A for effort, F for execution",
+            "This looks like a raccoon got into the paint",
+            "Is this art or a cry for help?",
+            "Did a toddler help you with this?",
+            "I've seen better doodles on a napkin",
+            "Looks like a masterpiece from the 'What Not to Do' collection",
+            "Did your dog supervise this project?",
+            "This is what happens when you don't follow instructions",
+            "I think your pencil is broken",
+            "Did you just sneeze on the canvas?",
+            "This gives new meaning to 'artistic license'",
+            "I didn't know slapstick comedy applied to drawing",
+            "This is why we can't have nice things",
+            "Did you run out of ideas halfway through?",
+            "You must be really confident in your artistic choices",
+            "This looks like a group project gone wrong",
+            "Did you use your non-dominant hand for this?",
+            "Congratulations, you've just redefined 'abstract'",
+            "You must really like colors... even if they don't match",
+            "Looks like you had a paint fight and lost",
+            "This would make a great cover for a book titled 'What Not to Draw'",
+            "Are you sure this isn’t a prank?",
+            "This is art's way of saying 'help me!'",
+            "Looks like you were going for 'chaotic genius'... nailed it",
+            "If you squint hard enough, it almost looks intentional",
+            "I didn't know they allowed finger painting in this class",
+            "This could be an interesting take on modern art... or a mistake",
+            "You really went for it, didn't you?",
+            "Did you draw this while on a rollercoaster?",
+            "I see you have a unique vision of the world",
+            "This would scare away all the art critics",
+            "You've unlocked a whole new level of creativity",
+            "It's like you used a blindfold as a drawing guide",
+            "I didn’t know you were channeling your inner toddler",
+            "This looks like the aftermath of a color explosion",
+            "It's okay, we all have off days",
+            "This is what happens when you run out of ideas",
+            "This could win a prize for the most confusing drawing",
+            "Do you have a plan, or are you just winging it?",
+            "At least it’s colorful... even if it’s a mess",
+            "I guess you’re redefining the term ‘creative chaos’",
+            "This looks like the aftermath of a paintball fight",
+            "This has potential... in an alternate universe",
+            "Your art tells a story... I just can’t understand it",
+            "It's like you were aiming for chaos, and hit a bullseye",
+            "I didn’t know you were trying to draw a modern tragedy",
+            "You have a unique style, I’ll give you that",
+            "If confusion were a medium, you'd be a master",
+            "This is like abstract art but without the talent",
+            "You’ve got a real flair for making people think",
+            "If the goal was to confuse, you nailed it",
+            "This looks like a warm-up sketch gone rogue",
+            "It’s so bad, it’s almost good",
+            "Your art is a mystery wrapped in a riddle",
+            "This could definitely be in a gallery... a really bad one",
+            "You’ve got a knack for turning creativity into chaos",
+            "This might just be the next big meme",
+            "You’ve created a new genre: confused art",
+            "If only the colors could talk, they’d probably scream",
+            "This looks like the result of an art class gone wrong",
+            "You've made something so unique, no one else can replicate it",
+            "If this was a race, you'd be in last place",
+            "This looks like a series of unfortunate events on canvas",
+            "If I squint hard enough, I can almost see the point",
+            "I can’t tell if this is a drawing or a horror movie",
+            "This must be what they mean by ‘experimental art’",
+            "Your brush strokes are like a secret language... I just don’t speak it",
+            "If I had a dollar for every bad drawing, I’d have this one",
+            "This is art's way of saying, 'Help, I've been abandoned!'"
+        ];
+
         const canvas = document.getElementById('drawingCanvas');
         const ctx = canvas.getContext('2d');
         const drawingSection = document.getElementById('drawingSection');
         const noneSection = document.getElementById('noneSection');
+        const noneTitle = document.getElementById('noneTitle');
         let drawing = false;
         let currentColor = "#000000";
         let brushSize = 5;
@@ -52,6 +148,7 @@
             } else {
                 noneSection.style.display = null;
                 drawingSection.style.display = "none";
+                noneTitle.innerText = phrases[Math.floor(Math.random() * phrases.length)];
             }
 
             if (page !== "draw") {
