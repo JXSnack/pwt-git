@@ -1,4 +1,4 @@
-from flask import Flask, g, render_template, request, jsonify, redirect, url_for
+from flask import Flask, g, render_template, request, jsonify, redirect, url_for, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from io import BytesIO
@@ -42,7 +42,7 @@ def index():
         if request.form.get("username") in Globals.user_data.keys():
             return render_template("index.html", exists=True, globals=Globals)
 
-        Globals.user_data[request.form['username']] = {"last_handshake": helper.millis(), "username": request.form['username']}
+        Globals.user_data[request.form['username']] = {"type": "user", "username": request.form['username']}
         return render_template("game.html", globals=Globals, username=request.form['username'])
     return render_template("index.html", exists=False, globals=Globals)
 
@@ -108,8 +108,8 @@ def io_identify(data):
         return
 
     if Globals.user_data.get(request.sid) is not None:
-        Globals.user_data[request.sid] = {"username": data['username']}
-        Globals.user_data[data['username']] = request.sid
+        Globals.user_data[request.sid] = {"type": "sid_mapping", "username": data['username']}
+        Globals.user_data[data['username']]["sid"] = request.sid
         print(f"\033[1;34m[IDENTIFY] Identified {data['username']}\033[0m")
     else:
         print("[X] Ignoring identify attempt from a session that has not connected yet")
@@ -137,6 +137,20 @@ def io_request_drawing():
     emit("request_drawing", broadcast=True)
 
 
+@socketio.on("request_drawings")
+def drawings():
+    users_with_drawings = []
+
+    for user in Globals.user_data.keys():
+        if Globals.user_data[user]["type"] != "user":
+            continue
+
+        if Path(f"instance/{Globals.game_data['round']}/{user}.png").exists():
+            users_with_drawings.append(user)
+
+    emit("rating_data", {"users": users_with_drawings}, broadcast=True)
+
+
 @app.route("/save_image/<username>", methods=["POST"])
 def save_image(username: str):
     Path(f"instance/{Globals.game_data['round']}").mkdir(parents=True, exist_ok=True)
@@ -154,6 +168,18 @@ def next_round():
 
     Globals.game_data["round"] += 1
     return "OK"
+
+
+@app.route("/drawing/<username>")
+def drawing(username: str):
+    if not Globals.started:
+        return "Game has not yet started"
+
+    path = Path(f"instance/{Globals.game_data["round"]}/{username}.png")
+    if not path.exists():
+        return "User has no drawing for this round"
+
+    return send_file(path, mimetype='image/png')
 
 
 @socketio.on('save_drawing')
