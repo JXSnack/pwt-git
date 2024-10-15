@@ -10,6 +10,7 @@
                 <button style="margin: auto 20px 20px auto" id="continue">Continue</button>
             </div>
         </div>
+        <div class="big" id="timer" style="display: none">0</div>
     {% endif %}
 
 
@@ -19,8 +20,10 @@
         const gameInfoElement = document.querySelector('#game-info');
         const connectionsElement = document.querySelector('#connections');
         const continueButton = document.querySelector("#continue");
+        const timerElement = document.querySelector("#timer");
 
         let currentPage = "zero";
+        let drawTimer = {{ globals.timer_max }};
 
         continueButton.addEventListener("click", (event) => {
             socket.emit('set_page', "draw");
@@ -34,13 +37,47 @@
             connectionsElement.innerText = amount;
         });
 
+        socket.on('set_page', (page) => {
+            currentPage = page;
+
+            if (page === "draw") {
+                gameInfoElement.style.display = "none";
+                timerElement.style.display = null;
+
+                setTimeout(() => {
+                    socket.emit('set_page', 'zero');
+                }, {{ globals.timer_max * 1000 }})
+            } else {
+                gameInfoElement.style.display = null;
+                timerElement.style.display = "none";
+            }
+        });
+
         async function start() {
             await fetch('/start?key={{ globals.key }}');
             location.reload();
         }
 
         async function updateGameData() {
+            if (currentPage !== "draw") {
+                drawTimer = {{ globals.timer_max }};
+                return;
+            }
 
+            drawTimer -= 0.2;
+
+            if (drawTimer < 0) {
+                drawTimer = {{ globals.timer_max }};
+                return;
+            }
+
+            if (drawTimer < {{ globals.timer_warn }}) {
+                timerElement.style.animation = 'shake 0.05s infinite'
+            } else {
+                timerElement.style.animation = null;
+            }
+
+            timerElement.innerText = parseInt(Math.ceil(drawTimer));
         }
 
         async function boot() {
