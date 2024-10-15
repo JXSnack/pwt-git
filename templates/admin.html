@@ -21,12 +21,6 @@
     const continueButton = document.querySelector("#continue");
     continueButton.addEventListener("click", (event) => {
         socket.emit('set_page', "draw");
-        setTimeout(() => {
-            socket.emit('set_page', "zero");
-        }, 5000);
-        setTimeout(() => {
-            socket.emit('set_page', "draw");
-        }, 10000);
     });
 
     socket.on('client_connected', (amount) => {
