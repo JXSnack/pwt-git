@@ -115,6 +115,7 @@ def io_disconnect():
 
     if Globals.user_data.get(request.sid) is not None:
         Globals.game_data['connections'] -= 1
+        del Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[request.sid]
         emit('client_disconnected', Globals.game_data['connections'], broadcast=True)
         print(f"\033[1;34m[DISCONNECT] Disconnecting {Globals.game_data['connections']}\033[0m")
