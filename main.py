@@ -1,5 +1,6 @@
 from flask import Flask, g, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO, emit
+from flask_cors import CORS
 from io import BytesIO
 from PIL import Image
 import base64
@@ -10,7 +11,14 @@ from helper import Globals
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "dev"
-socketio = SocketIO(app)
+CORS(app)
+socketio = SocketIO(
+    app,
+    async_mode='eventlet',
+#    logger=True,
+#    engineio_logger=True,
+    cors_allowed_origins="https://pwt.snackbag.net"
+)
 
 Path("instance").mkdir(exist_ok=True, parents=True)
 
