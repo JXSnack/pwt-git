@@ -66,13 +66,13 @@ def gamedata():
     return "Invalid permissions"
 
 
-@socketio.on('next_page')
-def next_page():
+@socketio.on('set_page')
+def set_page(page):
     if not Globals.started:
-        print("[X] Denied next page request, because game has not started yet")
+        print("[X] Denied set page request, because game has not started yet")
         return
 
-    emit("next_page", broadcast=True)
+    emit("set_page", page, broadcast=True)
 
 
 @socketio.on('connect')
