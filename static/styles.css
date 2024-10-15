@@ -203,3 +203,13 @@ canvas {
         transform: scale(1);
     }
 }
+
+@keyframes shake {
+    from {
+        transform: translateX(-2px);
+    }
+
+    to {
+        transform: translateX(2px);
+    }
+}
