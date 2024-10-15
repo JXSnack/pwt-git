@@ -1,40 +1,119 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>You're in!</h1>
-<p>Please wait for further instructions</p>
+    <h1>You're in!</h1>
+    <p>Please wait for further instructions</p>
 
-<script type="text/javascript">
-    let socket = io();
+    <!-- Drawing section, hidden by default -->
+    <div id="drawingSection" style="display:none;">
+        <canvas id="drawingCanvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
+        <br>
+        <label for="colorPicker">Pick a color:</label>
+        <select id="colorPicker">
+            <option value="#000000">Black</option>
+            <option value="#FF0000">Red</option>
+            <option value="#00FF00">Green</option>
+            <option value="#0000FF">Blue</option>
+            <option value="#FFFF00">Yellow</option>
+            <option value="#FF00FF">Magenta</option>
+            <option value="#00FFFF">Cyan</option>
+            <option value="#FFFFFF">White</option>
+        </select>
+        <br>
+        <label for="brushSize">Brush Size:</label>
+        <input type="range" id="brushSize" min="1" max="20" value="5">
+        <br>
+        <button onclick="saveDrawing()">Save Drawing</button>
+    </div>
 
-    socket.on('connect_error', (error) => {
-        alert("An unknown error occurred while trying to connect to the server. Please log in again or start a new game.");
-        window.location.replace("/");
-    });
+    <script type="text/javascript">
+        let socket = io();
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const drawingSection = document.getElementById('drawingSection');
+        let drawing = false;
+        let currentColor = "#000000";
+        let brushSize = 5;
 
-    socket.on('connect_timeout', (timeout) => {
-        alert("Your connection timed out. Please log in again or start a new game.");
-        window.location.replace("/");
-    });
+        drawingSection.style.display = "none";
 
-    socket.on('reconnect_failed', (error) => {
-        alert("An unknown error occurred while trying to REconnect to the server. Please log in again or start a new game.");
-        window.location.replace("/");
-    });
+        socket.on('next_page', () => {
+            drawingSection.style.display = "block";
+        });
 
-    socket.on('next_page', () => {
-        alert("next page")
-    });
+        canvas.addEventListener('mousedown', () => drawing = true);
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+            ctx.beginPath();
+        });
+        canvas.addEventListener('mousemove', draw);
 
-    async function boot() {
-        const ticker = setInterval(async () => {
-            await updateGame();
-        }, 200);
-    }
+        document.getElementById('colorPicker').addEventListener('change', function () {
+            currentColor = this.value;
+        });
 
-    async function updateGame() {
+        document.getElementById('brushSize').addEventListener('input', function () {
+            brushSize = this.value;
+        });
 
-    }
+        function draw(event) {
+            if (!drawing) return;
+            const rect = canvas.getBoundingClientRect();
 
-    boot();
-</script>
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+
+            ctx.lineTo(event.clientX - rect.left, event.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(event.clientX - rect.left, event.clientY - rect.top);
+        }
+
+        function saveDrawing() {
+            const image = canvas.toDataURL('image/png');
+            socket.emit('save_drawing', {image: image});
+
+            fetch('/save_image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({image: image}),
+            })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        socket.on('connect_error', (error) => {
+            alert("An unknown error occurred while trying to connect to the server. Please log in again or start a new game.");
+            window.location.replace("/");
+        });
+
+        socket.on('connect_timeout', (timeout) => {
+            alert("Your connection timed out. Please log in again or start a new game.");
+            window.location.replace("/");
+        });
+
+        socket.on('reconnect_failed', (error) => {
+            alert("An unknown error occurred while trying to REconnect to the server. Please log in again or start a new game.");
+            window.location.replace("/");
+        });
+
+        async function boot() {
+            const ticker = setInterval(async () => {
+                await updateGame();
+            }, 200);
+        }
+
+        async function updateGame() {
+
+        }
+
+        boot();
+    </script>
 {% endblock %}
