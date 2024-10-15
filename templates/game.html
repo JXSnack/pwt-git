@@ -21,6 +21,10 @@
         window.location.replace("/");
     });
 
+    socket.on('next_page', () => {
+        alert("next page")
+    });
+
     async function boot() {
         const ticker = setInterval(async () => {
             await updateGame();
