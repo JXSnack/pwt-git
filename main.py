@@ -60,6 +60,11 @@ def gamedata():
     return "Invalid permissions"
 
 
+@socketio.on('next_page')
+def next_page():
+    emit("next_page", broadcast=True)
+
+
 @socketio.on('connect')
 def io_connect():
     is_index = request.headers['Referer'].endswith(url_for("index"))
