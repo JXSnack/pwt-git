@@ -62,6 +62,10 @@ def gamedata():
 
 @socketio.on('next_page')
 def next_page():
+    if not Globals.started:
+        print("[X] Denied next page request, because game has not started yet")
+        return
+
     emit("next_page", broadcast=True)
 
 
