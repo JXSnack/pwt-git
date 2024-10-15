@@ -1,56 +1,59 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if not globals.started %}
-<button class="beautiful" onclick="start();">Start</button>
-{% else %}
-<div class="game-info" id="game-info">
-    <h1>pwt.snackbag.net</h1>
-    <div>
-        <p>Members: <span id="connections">?</span></p>
-        <button style="margin: auto 20px 20px auto" id="continue">Continue</button>
-    </div>
-</div>
-{% endif %}
-
-
-<script type="text/javascript">
-    let socket = io();
-
-    const gameInfoElement = document.querySelector('#game-info');
-    const connectionsElement = document.querySelector('#connections');
-    const continueButton = document.querySelector("#continue");
-    continueButton.addEventListener("click", (event) => {
-        socket.emit('set_page', "draw");
-    });
-
-    socket.on('client_connected', (amount) => {
-        connectionsElement.innerText = amount;
-    });
-
-    socket.on('client_disconnected', (amount) => {
-        connectionsElement.innerText = amount;
-    });
-
-    async function start() {
-        await fetch('/start?key={{ globals.key }}');
-        location.reload();
-    }
-
-    async function updateGameData() {
-
-    }
-
-    async function boot() {
-        const con = await (await fetch("/gamedata?key={{ globals.key }}")).json();
-        connectionsElement.innerText = con['connections'];
-
-        const ticker = setInterval(async () => {
-            await updateGameData();
-        }, 200);
-    }
-
-    {% if globals.started %}
-        boot();
+    {% if not globals.started %}
+        <button class="beautiful" onclick="start();">Start</button>
+    {% else %}
+        <div class="game-info" id="game-info">
+            <h1>pwt.snackbag.net</h1>
+            <div>
+                <p>Members: <span id="connections">?</span></p>
+                <button style="margin: auto 20px 20px auto" id="continue">Continue</button>
+            </div>
+        </div>
     {% endif %}
-</script>
+
+
+    <script type="text/javascript">
+        let socket = io();
+
+        const gameInfoElement = document.querySelector('#game-info');
+        const connectionsElement = document.querySelector('#connections');
+        const continueButton = document.querySelector("#continue");
+
+        let currentPage = "zero";
+
+        continueButton.addEventListener("click", (event) => {
+            socket.emit('set_page', "draw");
+        });
+
+        socket.on('client_connected', (amount) => {
+            connectionsElement.innerText = amount;
+        });
+
+        socket.on('client_disconnected', (amount) => {
+            connectionsElement.innerText = amount;
+        });
+
+        async function start() {
+            await fetch('/start?key={{ globals.key }}');
+            location.reload();
+        }
+
+        async function updateGameData() {
+
+        }
+
+        async function boot() {
+            const con = await (await fetch("/gamedata?key={{ globals.key }}")).json();
+            connectionsElement.innerText = con['connections'];
+
+            const ticker = setInterval(async () => {
+                await updateGameData();
+            }, 200);
+        }
+
+        {% if globals.started %}
+            boot();
+        {% endif %}
+    </script>
 {% endblock %}
