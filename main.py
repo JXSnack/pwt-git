@@ -127,6 +127,7 @@ def io_identify(data):
     if Globals.user_data.get(request.sid) is not None:
         Globals.user_data[request.sid] = {"type": "sid_mapping", "username": data['username']}
         Globals.user_data[data['username']]["sid"] = request.sid
+        emit('identify', {'sid': request.sid, 'username': data['username']}, broadcast=True)
         print(f"\033[1;34m[IDENTIFY] Identified {data['username']}\033[0m")
     else:
         print("[X] Ignoring identify attempt from a session that has not connected yet")
@@ -141,6 +142,7 @@ def io_disconnect():
 
     if Globals.user_data.get(request.sid) is not None:
         Globals.game_data['connections'] -= 1
+        username = Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[request.sid]
         emit('client_disconnected', Globals.game_data['connections'], broadcast=True)
