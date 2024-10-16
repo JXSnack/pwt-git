@@ -308,3 +308,17 @@ a:active {
         transform: translateX(4px) translateY(4px);
     }
 }
+
+@keyframes warn {
+    0% {
+        background-color: white;
+    }
+
+    50% {
+        background-color: rgb(255, 193, 193);
+    }
+
+    100% {
+        background-color: white;
+    }
+}

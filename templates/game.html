@@ -316,7 +316,7 @@
             let drawTime = -Math.ceil(parseInt(Date.now() - Math.ceil(drawingStartTime + {{ globals.timer_max * 1000}})) / 1000);
 
             if (drawTime < 5) {
-                timerElement.style.animation = "0.05s shake infinite"
+                timerElement.style.animation = "0.05s shake infinite, 2s warn infinite"
             } else {
                 timerElement.style.animation = null;
             }
