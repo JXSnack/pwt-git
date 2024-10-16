@@ -1,3 +1,5 @@
+import shutil
+
 from flask import Flask, g, render_template, request, jsonify, redirect, url_for, send_file
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
@@ -20,7 +22,10 @@ socketio = SocketIO(
     cors_allowed_origins=["https://pwt.snackbag.net", "http://127.0.0.1:5000"]
 )
 
-Path("instance").mkdir(exist_ok=True, parents=True)
+instance_path = Path("instance")
+if instance_path.exists():
+    shutil.rmtree(instance_path)
+instance_path.mkdir(exist_ok=True, parents=True)
 
 
 @app.before_request
