@@ -98,7 +98,6 @@ def gamedata():
         if not Globals.started:
             return "Game has not started yet"
 
-        print(Globals.game_data)
         return jsonify(Globals.game_data)
 
     return "Invalid permissions"
