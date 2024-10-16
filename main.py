@@ -237,5 +237,10 @@ def io_show_podium():
     emit("show_podium", Globals.game_data['ratings'], broadcast=True)
 
 
+@socketio.on("set_already_begun")
+def io_set_already_begun(state: bool):
+    Globals.actually_started = state
+
+
 if __name__ == "__main__":
     socketio.run(app, allow_unsafe_werkzeug=True, debug=True)
