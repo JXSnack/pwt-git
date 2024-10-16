@@ -64,6 +64,11 @@ def admin():
     return render_template("admin.html", globals=Globals)
 
 
+@app.route("/monitor")
+def monitor():
+    return render_template("monitor.html", globals=Globals)
+
+
 @app.route("/start")
 def start():
     if request.args.get("key") == Globals.key:
