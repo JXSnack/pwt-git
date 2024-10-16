@@ -69,6 +69,12 @@ def monitor():
     return render_template("monitor.html", globals=Globals)
 
 
+@socketio.on("kick")
+def io_kick(username):
+    print("\033[1;31m[X] KICKED " + username)
+    emit("kick_user", username, broadcast=True)
+
+
 @app.route("/start")
 def start():
     if request.args.get("key") == Globals.key:

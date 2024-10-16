@@ -191,6 +191,13 @@
             }
         });
 
+        socket.on('kick_user', (username) => {
+            if (username === "{{ username }}") {
+                alert("You have been kicked.");
+                window.location.replace("/");
+            }
+        });
+
         canvas.addEventListener('mousedown', () => drawing = true);
         window.addEventListener('mouseup', () => {
             drawing = false;
