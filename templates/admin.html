@@ -88,6 +88,11 @@
                 gameInfoElement.style.display = "none";
                 timerElement.style.display = "none";
                 slideImage.style.display = null;
+            } else if (page === "rating") {
+                gameInfoElement.style.display = "none";
+                timerElement.style.display = "none";
+                slideImage.style.display = null;
+                slideImageImage.src = `/static/answer/${currentRound}.png`;
             } else if (page === "draw") {
                 gameInfoElement.style.display = "none";
                 timerElement.style.display = null;
