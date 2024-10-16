@@ -56,7 +56,7 @@ def index():
 
         Globals.user_data[username] = {"type": "user", "username": username}
         return render_template("game.html", globals=Globals, username=username)
-    return render_template("index.html", exists=False, illegal=False, globals=Globals)
+    return render_template("index.html" if request.args.get('t') != 'k' else "kicked.html", exists=False, illegal=False, globals=Globals)
 
 
 @app.route("/admin")
@@ -148,7 +148,7 @@ def io_disconnect():
 
     if Globals.user_data.get(request.sid) is not None:
         Globals.game_data['connections'] -= 1
-        username = Globals.user_data[Globals.user_data[request.sid]['username']]
+        username = Globals.user_data[request.sid]['username']
         del Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[request.sid]
         emit('client_disconnected', {"amount": Globals.game_data['connections'], "username": username}, broadcast=True)

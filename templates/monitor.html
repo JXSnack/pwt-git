@@ -20,7 +20,7 @@
 
         socket.on('identify', (data) => {
             let clientElement = document.createElement('p');
-            clientElement.id = "client-" + data;
+            clientElement.id = "client-" + data['username'];
             clientElement.innerText = data['username'];
             clientElement.addEventListener('click', async (event) => {
                 socket.emit('kick', data['username']);

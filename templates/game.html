@@ -193,8 +193,7 @@
 
         socket.on('kick_user', (username) => {
             if (username === "{{ username }}") {
-                alert("You have been kicked.");
-                window.location.replace("/");
+                window.location.replace("/game?t=k");
             }
         });
 
