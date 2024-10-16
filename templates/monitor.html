@@ -14,12 +14,14 @@
         const connectionsElement = document.querySelector('#connections');
         const clientsElement = document.querySelector('#clients');
 
-        socket.on('client_connected', (amount, name) => {
+        socket.on('client_connected', (amount) => {
             connectionsElement.innerText = amount;
+        });
 
+        socket.on('identify', (data) => {
             let clientElement = document.createElement('p');
-            clientElement.id = "client-" + name;
-            clientElement.innerText = name;
+            clientElement.id = "client-" + data;
+            clientElement.innerText = data;
             clientElement.append(clientElement);
         });
 
