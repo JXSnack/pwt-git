@@ -300,11 +300,11 @@ a:active {
 }
 
 @keyframes shake {
-    from {
-        transform: translateX(-2px);
+    0% {
+        transform: translateX(-4px) translateY(-4px);
     }
 
-    to {
-        transform: translateX(2px);
+    100% {
+        transform: translateX(4px) translateY(4px);
     }
 }
