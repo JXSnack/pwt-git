@@ -71,7 +71,7 @@ def monitor():
 
 @socketio.on("kick")
 def io_kick(username):
-    print("\033[1;31m[X] KICKED " + username)
+    print("\033[1;31m[X] KICKED " + username + "\033[0m")
     emit("kick_user", username, broadcast=True)
 
 
@@ -82,6 +82,7 @@ def start():
         Globals.game_data["page"] = 0
         Globals.game_data["round"] = 0
         Globals.game_data["state"] = 'start'
+        Globals.game_data["ratings"] = {}
         Globals.game_data["connections"] = 0
         return "OK"
     return "Invalid permissions"
@@ -133,6 +134,10 @@ def io_identify(data):
     if Globals.user_data.get(request.sid) is not None:
         Globals.user_data[request.sid] = {"type": "sid_mapping", "username": data['username']}
         Globals.user_data[data['username']]["sid"] = request.sid
+        Globals.game_data["ratings"][data['username']] = {}
+        Globals.game_data["ratings"][data['username']]["fav"] = 0
+        Globals.game_data["ratings"][data['username']]["admin"] = 0
+
         emit('identify', {'sid': request.sid, 'username': data['username']}, broadcast=True)
         print(f"\033[1;34m[IDENTIFY] Identified {data['username']}\033[0m")
     else:
@@ -151,6 +156,7 @@ def io_disconnect():
         username = Globals.user_data[request.sid]['username']
         del Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[request.sid]
+        del Globals.game_data["ratings"][username]
         emit('client_disconnected', {"amount": Globals.game_data['connections'], "username": username}, broadcast=True)
         print(f"\033[1;34m[DISCONNECT] Disconnecting {Globals.game_data['connections']}\033[0m")
     else:
@@ -184,6 +190,16 @@ def save_image(username: str):
     image = Image.open(BytesIO(image_data))
     image.save(f"instance/{Globals.game_data['round']}/{username}.png")
     return "Image saved successfully!"
+
+
+@app.route("/submit_rating/<username>")
+def submit_rating(username: str):
+    if Globals.game_data["ratings"].get(username) is None:
+        return "Invalid user"
+
+    Globals.game_data['ratings'][username]['fav'] += 1
+    print(f"\033[1;32mGot rating for {username}\033[0m")
+    return "OK"
 
 
 @app.route("/next_round")
