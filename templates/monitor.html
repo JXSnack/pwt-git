@@ -21,8 +21,8 @@
         socket.on('identify', (data) => {
             let clientElement = document.createElement('p');
             clientElement.id = "client-" + data;
-            clientElement.innerText = data;
-            clientElement.append(clientElement);
+            clientElement.innerText = data['username'];
+            clientsElement.append(clientElement);
         });
 
         socket.on('client_disconnected', (amount, name) => {
