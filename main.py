@@ -41,6 +41,9 @@ def _index():
 
 @app.route("/game", methods=["GET", "POST"])
 def index():
+    if Globals.actually_started:
+        return render_template("already_begun.html")
+
     if request.method == "POST":
         if not Globals.started:
             return "Game has not started yet"
@@ -207,6 +210,7 @@ def next_round():
     if not Globals.started:
         return "Game has not yet started"
 
+    Globals.actually_started = True
     Globals.game_data["round"] += 1
     return "OK"
 

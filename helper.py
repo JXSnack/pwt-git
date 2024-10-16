@@ -6,6 +6,7 @@ class Globals:
     user_data = {}
     game_data = {}
     started = False
+    actually_started = False
     timer_max = 30
     timer_warn = 5
 
