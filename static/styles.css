@@ -254,6 +254,26 @@ canvas {
     filter: brightness(0.92);
 }
 
+#clients {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 600px;
+}
+
+#clients p {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+#clients p:hover {
+    text-decoration: line-through;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
 @keyframes popin {
     from {
         right: 30px;
