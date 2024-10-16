@@ -28,9 +28,9 @@
             clientsElement.append(clientElement);
         });
 
-        socket.on('client_disconnected', (amount, name) => {
-            connectionsElement.innerText = amount;
-            document.getElementById('client-' + name).remove();
+        socket.on('client_disconnected', (data) => {
+            connectionsElement.innerText = data['amount'];
+            document.getElementById('client-' + data['username']).remove();
         });
     </script>
 {% endblock %}

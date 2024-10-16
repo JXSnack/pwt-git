@@ -151,7 +151,7 @@ def io_disconnect():
         username = Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[request.sid]
-        emit('client_disconnected', Globals.game_data['connections'], broadcast=True)
+        emit('client_disconnected', {"amount": Globals.game_data['connections'], "username": username}, broadcast=True)
         print(f"\033[1;34m[DISCONNECT] Disconnecting {Globals.game_data['connections']}\033[0m")
     else:
         print("[X] Ignoring disconnection attempt from non established user")

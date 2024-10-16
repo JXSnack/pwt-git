@@ -47,8 +47,8 @@
             connectionsElement.innerText = amount;
         });
 
-        socket.on('client_disconnected', (amount) => {
-            connectionsElement.innerText = amount;
+        socket.on('client_disconnected', (data) => {
+            connectionsElement.innerText = data['amount'];
         });
 
         socket.on('set_page', (page) => {
