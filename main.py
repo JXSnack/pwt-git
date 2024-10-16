@@ -44,11 +44,14 @@ def index():
         if not Globals.started:
             return "Game has not started yet"
 
-        if request.form.get("username") in Globals.user_data.keys():
+        username = request.form.get("username")
+        username = ' '.join(username.split())
+
+        if helper.check_dict_case_insensitive(Globals.user_data, username):
             return render_template("index.html", exists=True, globals=Globals)
 
-        Globals.user_data[request.form['username']] = {"type": "user", "username": request.form['username']}
-        return render_template("game.html", globals=Globals, username=request.form['username'])
+        Globals.user_data[username] = {"type": "user", "username": username}
+        return render_template("game.html", globals=Globals, username=username)
     return render_template("index.html", exists=False, globals=Globals)
 
 
