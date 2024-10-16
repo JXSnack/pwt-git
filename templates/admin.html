@@ -41,10 +41,10 @@
             } else if (roundProgress === 1) {
                 socket.emit('set_page', "draw");
                 roundProgress = 2;
-            } else if (roundProgress === 3) {
+            } else if (roundProgress === 2) {
                 socket.emit('request_drawings');
                 socket.emit('set_page', "rating");
-                roundProgress = 4;
+                roundProgress = 3;
             } else {
                 await fetch("/next_round");
                 await freshData();
