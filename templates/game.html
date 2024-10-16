@@ -9,8 +9,8 @@
     </div>
 
     <div id="ratingSection" style="display: none">
-        <h1>Pick your favorite!</h1>
-        <p>You cannot change your choice later.</p>
+        <h1 id="ratingSectionTitle">?</h1>
+        <p>Watch out: you cannot change your choice</p>
 
         <div id="ratingSectionImages"></div>
     </div>
@@ -143,6 +143,7 @@
         const noneSection = document.getElementById('noneSection');
         const ratingSection = document.getElementById('ratingSection');
         const ratingSectionImages = document.getElementById('ratingSectionImages');
+        const ratingSectionTitle = document.getElementById('ratingSectionTitle');
         const noneTitle = document.getElementById('noneTitle');
         const timerElement = document.getElementById("timer");
         let drawing = false;
@@ -159,7 +160,7 @@
             ratingSectionImages.innerHTML = "";
 
             for (let user of data['users']) {
-                ratingSectionImages.innerHTML += `<img draggable=false src='/drawing/${user}?t=${Date.now()}'/>`
+                ratingSectionImages.innerHTML += `<img onclick='submitRating("${user}")' draggable=false src='/drawing/${user}?t=${Date.now()}'/>`
             }
         });
 
@@ -173,6 +174,7 @@
                 timerElement.style.display = null;
                 drawingSection.style.display = null;
             } else if (page === "rating") {
+                ratingSectionTitle.innerText = "Pick your favorite!";
                 noneSection.style.display = "none";
                 ratingSection.style.display = null;
                 timerElement.style.display = "none";
@@ -237,6 +239,12 @@
             ctx.beginPath();
             ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
             event.preventDefault();
+        }
+
+        async function submitRating(user) {
+            const resp = fetch(`/submit_rating/${user}`);
+            ratingSectionImages.innerHTML = "";
+            ratingSectionTitle.innerText = "Submitted your rating";
         }
 
         document.getElementById('colorPicker').addEventListener('change', function () {
