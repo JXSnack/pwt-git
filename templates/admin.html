@@ -24,10 +24,16 @@
         const roundInfoElement = document.querySelector("#round");
 
         let currentPage = "zero";
+        let currentRound = 0;
         let roundProgress = 0;
         let drawTimer = {{ globals.timer_max }};
 
         continueButton.addEventListener("click", async (event) => {
+            if (currentRound === 5) {
+                socket.emit("show_podium");
+                return;
+            }
+
             if (roundProgress === 0) {
                 socket.emit('set_page', "draw");
                 roundProgress = 1;
@@ -41,6 +47,10 @@
                 socket.emit('set_page', "zero");
                 roundProgress = 0;
             }
+        });
+
+        socket.on('show_podium', () => {
+            socket.emit('set_page');
         });
 
         socket.on('client_connected', (amount) => {
@@ -98,6 +108,7 @@
         async function freshData() {
             const con = await (await fetch("/gamedata?key={{ globals.key }}")).json();
             roundInfoElement.innerText = con['round'] + 1;
+            currentRound = con['round'] + 1;
         }
 
         async function boot() {

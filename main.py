@@ -228,5 +228,10 @@ def handle_save_drawing(data):
     emit('save_image', data, broadcast=True)
 
 
+@socketio.on("show_podium")
+def io_show_podium():
+    emit("show_podium", Globals.game_data['ratings'], broadcast=True)
+
+
 if __name__ == "__main__":
     socketio.run(app, allow_unsafe_werkzeug=True, debug=True)

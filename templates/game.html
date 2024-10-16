@@ -15,6 +15,10 @@
         <div id="ratingSectionImages"></div>
     </div>
 
+    <div id="podiumSection" style="display: none; flex-direction: column; align-items: center; justify-content: center;">
+        <h1>See the results on the big screen!</h1>
+    </div>
+
     <div id="drawingSection" style="display:none;">
         <canvas id="drawingCanvas" width="600" height="375" style="border:1px solid #000000;"></canvas>
         <div>
@@ -144,6 +148,7 @@
         const ratingSection = document.getElementById('ratingSection');
         const ratingSectionImages = document.getElementById('ratingSectionImages');
         const ratingSectionTitle = document.getElementById('ratingSectionTitle');
+        const podiumSection = document.getElementById("podiumSection");
         const noneTitle = document.getElementById('noneTitle');
         const timerElement = document.getElementById("timer");
         let drawing = false;
@@ -162,6 +167,14 @@
             for (let user of data['users']) {
                 ratingSectionImages.innerHTML += `<img onclick='submitRating("${user}")' draggable=false src='/drawing/${user}?t=${Date.now()}'/>`
             }
+        });
+
+        socket.on('show_podium', () => {
+            noneSection.style.display = "none";
+            ratingSection.style.display = "none";
+            timerElement.style.display = "none";
+            drawingSection.style.display = "none";
+            podiumSection.style.display = "flex";
         });
 
         socket.on('set_page', (page) => {
