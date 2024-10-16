@@ -157,7 +157,7 @@ def save_image(username: str):
     data = request.json['image']
     image_data = base64.b64decode(data.split(',')[1])
     image = Image.open(BytesIO(image_data))
-    image.save(f'instance/{Globals.game_data['round']}/{username}.png')
+    image.save(f"instance/{Globals.game_data['round']}/{username}.png")
     return "Image saved successfully!"
 
 
