@@ -29,7 +29,7 @@
         let drawTimer = {{ globals.timer_max }};
 
         continueButton.addEventListener("click", async (event) => {
-            if (currentRound === 5) {
+            if (currentRound === 6) {
                 socket.emit("show_podium");
                 return;
             }
