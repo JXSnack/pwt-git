@@ -1,3 +1,4 @@
+import re
 import shutil
 
 from flask import Flask, g, render_template, request, jsonify, redirect, url_for, send_file
@@ -47,12 +48,15 @@ def index():
         username = request.form.get("username")
         username = ' '.join(username.split())
 
+        if not re.compile("^([a-zA-Z0-9_\- :()])*$").match(username):
+            return render_template("index.html", illegal=True, exists=False, globals=Globals)
+
         if helper.check_dict_case_insensitive(Globals.user_data, username):
-            return render_template("index.html", exists=True, globals=Globals)
+            return render_template("index.html", exists=True, illegal=False, globals=Globals)
 
         Globals.user_data[username] = {"type": "user", "username": username}
         return render_template("game.html", globals=Globals, username=username)
-    return render_template("index.html", exists=False, globals=Globals)
+    return render_template("index.html", exists=False, illegal=False, globals=Globals)
 
 
 @app.route("/admin")
