@@ -17,6 +17,7 @@
 
     <div id="podiumSection" style="display: none; flex-direction: column; align-items: center; justify-content: center;">
         <h1>See the results on the big screen!</h1>
+        <p>You have received a total of <span id="podiumPoints">?</span> points!</p>
     </div>
 
     <div id="drawingSection" style="display:none;">
@@ -149,6 +150,7 @@
         const ratingSectionImages = document.getElementById('ratingSectionImages');
         const ratingSectionTitle = document.getElementById('ratingSectionTitle');
         const podiumSection = document.getElementById("podiumSection");
+        const podiumPoints = document.getElementById('podiumPoints');
         const noneTitle = document.getElementById('noneTitle');
         const timerElement = document.getElementById("timer");
         let drawing = false;
@@ -169,11 +171,15 @@
             }
         });
 
-        socket.on('show_podium', () => {
+        socket.on('show_podium', (ratings) => {
             noneSection.style.display = "none";
             ratingSection.style.display = "none";
             timerElement.style.display = "none";
             drawingSection.style.display = "none";
+
+            let favRatings = ratings["{{ username }}"]["fav"];
+            let adminRatings = ratings["{{ username }}"]["admin"];
+            podiumPoints.innerText = favRatings + adminRatings * 2;
             podiumSection.style.display = "flex";
         });
 
