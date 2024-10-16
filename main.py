@@ -87,6 +87,7 @@ def start():
         Globals.game_data["state"] = 'start'
         Globals.game_data["ratings"] = {}
         Globals.game_data["connections"] = 0
+        Globals.game_data["usernames"] = []
         return "OK"
     return "Invalid permissions"
 
@@ -97,6 +98,7 @@ def gamedata():
         if not Globals.started:
             return "Game has not started yet"
 
+        print(Globals.game_data)
         return jsonify(Globals.game_data)
 
     return "Invalid permissions"
@@ -140,6 +142,8 @@ def io_identify(data):
         Globals.game_data["ratings"][data['username']] = {}
         Globals.game_data["ratings"][data['username']]["fav"] = 0
         Globals.game_data["ratings"][data['username']]["admin"] = 0
+        if data['username'] not in Globals.game_data['usernames']:
+            Globals.game_data['usernames'].append(data['username'])
 
         emit('identify', {'sid': request.sid, 'username': data['username']}, broadcast=True)
         print(f"\033[1;34m[IDENTIFY] Identified {data['username']}\033[0m")
@@ -157,6 +161,7 @@ def io_disconnect():
     if Globals.user_data.get(request.sid) is not None:
         Globals.game_data['connections'] -= 1
         username = Globals.user_data[request.sid]['username']
+        Globals.game_data['usernames'].remove(username)
         del Globals.user_data[Globals.user_data[request.sid]['username']]
         del Globals.user_data[request.sid]
         del Globals.game_data["ratings"][username]

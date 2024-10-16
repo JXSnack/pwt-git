@@ -14,23 +14,41 @@
         const connectionsElement = document.querySelector('#connections');
         const clientsElement = document.querySelector('#clients');
 
+        async function freshData() {
+            const resp = await fetch("/gamedata?key={{ globals.key }}");
+            const data = await resp.json();
+
+            connectionsElement.innerText = data['connections'];
+            clientsElement.innerHTML = "";
+
+            for (let username of data['usernames']) {
+                await addClient(username);
+            }
+        }
+
         socket.on('client_connected', (amount) => {
             connectionsElement.innerText = amount;
         });
 
-        socket.on('identify', (data) => {
+        socket.on('identify', async (data) => {
+            await addClient(data['username']);
+        });
+
+        async function addClient(username) {
             let clientElement = document.createElement('p');
-            clientElement.id = "client-" + data['username'];
-            clientElement.innerText = data['username'];
+            clientElement.id = "client-" + username;
+            clientElement.innerText = username;
             clientElement.addEventListener('click', async (event) => {
-                socket.emit('kick', data['username']);
+                socket.emit('kick', username);
             });
             clientsElement.append(clientElement);
-        });
+        }
 
         socket.on('client_disconnected', (data) => {
             connectionsElement.innerText = data['amount'];
             document.getElementById('client-' + data['username']).remove();
         });
+
+        freshData();
     </script>
 {% endblock %}
