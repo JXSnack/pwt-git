@@ -240,6 +240,14 @@ def handle_save_drawing(data):
 def io_show_podium():
     emit("show_podium", Globals.game_data['ratings'], broadcast=True)
 
+    users = []
+    for username, ratings in Globals.game_data["ratings"].items():
+        total_points = ratings['fav'] + 2 * ratings['admin']
+        users.append((username, total_points))
+    top_users = sorted(users, key=lambda x: x[1], reverse=True)[:3]
+
+    emit("podium_info", top_users)
+
 
 @socketio.on("set_already_begun")
 def io_set_already_begun(state: bool):

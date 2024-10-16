@@ -20,9 +20,9 @@
             <div id="podium3"><div style="text-align: center"><p><span id="podium3-points">?</span> points</p><h2>3rd</h2></div></div>
             <div id="podium1"><div style="text-align: center"><p><span id="podium1-points">?</span> points</p><h2>1st</h2></div></div>
 
-            <p id="winner-p1">Name</p>
-            <p id="winner-p2">Name</p>
-            <p id="winner-p3">Name</p>
+            <p id="winner-p1">?</p>
+            <p id="winner-p2">?</p>
+            <p id="winner-p3">?</p>
         </div>
     {% endif %}
 
@@ -78,8 +78,16 @@
             await handleContinueButton();
         });
 
-        socket.on('show_podium', () => {
-            {#socket.emit('set_page', "podium");#}
+        socket.on('podium_info', (info) => {
+            let i = 1;
+            for (let rating of info) {
+                document.getElementById(`podium${i}-points`).innerText = rating[1];
+                document.getElementById(`winner-p${i}`).innerText = rating[0];
+                i++;
+            }
+
+            gameInfoElement.style.display = "none";
+            document.getElementById("podium").style.display = null;
         });
 
         socket.on('client_connected', (amount) => {
