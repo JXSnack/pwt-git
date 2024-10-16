@@ -175,7 +175,7 @@ def drawing(username: str):
     if not Globals.started:
         return "Game has not yet started"
 
-    path = Path(f"instance/{Globals.game_data["round"]}/{username}.png")
+    path = Path(f"instance/{Globals.game_data['round']}/{username}.png")
     if not path.exists():
         return "User has no drawing for this round"
 
