@@ -51,7 +51,7 @@
         });
 
         socket.on('show_podium', () => {
-            socket.emit('set_page');
+            {#socket.emit('set_page', "podium");#}
         });
 
         socket.on('client_connected', (amount) => {
