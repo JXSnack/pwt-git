@@ -11,6 +11,10 @@
             </div>
         </div>
         <div class="big" id="timer" style="display: none">0</div>
+        <div id="slideImage" style="display: none">
+            <img id="slideImageImage">
+            <button style="position: absolute; bottom: 20px; right: 20px" id="otherContinue">Continue</button>
+        </div>
     {% endif %}
 
 
@@ -20,15 +24,18 @@
         const gameInfoElement = document.querySelector('#game-info');
         const connectionsElement = document.querySelector('#connections');
         const continueButton = document.querySelector("#continue");
+        const otherContinueButton = document.querySelector("#otherContinue");
         const timerElement = document.querySelector("#timer");
         const roundInfoElement = document.querySelector("#round");
+        const slideImage = document.querySelector("#slideImage");
+        const slideImageImage = document.querySelector("#slideImageImage");
 
         let currentPage = "zero";
         let currentRound = 0;
         let roundProgress = 0;
         let drawTimer = {{ globals.timer_max }};
 
-        continueButton.addEventListener("click", async (event) => {
+        async function handleContinueButton() {
             socket.emit("set_already_begun", true);
             if (currentRound === 6) {
                 socket.emit("show_podium");
@@ -37,6 +44,7 @@
 
             if (roundProgress === 0) {
                 socket.emit('set_page', `slide-${currentRound}`);
+                slideImageImage.src = `/static/slides/${currentRound}.png`;
                 roundProgress = 1;
             } else if (roundProgress === 1) {
                 socket.emit('set_page', "draw");
@@ -51,6 +59,14 @@
                 socket.emit('set_page', "zero");
                 roundProgress = 0;
             }
+        }
+
+        otherContinueButton.addEventListener("click", async (event) => {
+            await handleContinueButton();
+        });
+
+        continueButton.addEventListener("click", async (event) => {
+            await handleContinueButton();
         });
 
         socket.on('show_podium', () => {
@@ -68,9 +84,14 @@
         socket.on('set_page', (page) => {
             currentPage = page;
 
-            if (page === "draw") {
+            if (page.startsWith("slide-")) {
+                gameInfoElement.style.display = "none";
+                timerElement.style.display = "none";
+                slideImage.style.display = null;
+            } else if (page === "draw") {
                 gameInfoElement.style.display = "none";
                 timerElement.style.display = null;
+                slideImage.style.display = "none";
 
                 setTimeout(() => {
                     socket.emit('request_drawing');
@@ -79,6 +100,7 @@
             } else {
                 gameInfoElement.style.display = null;
                 timerElement.style.display = "none";
+                slideImage.style.display = "none";
             }
         });
 

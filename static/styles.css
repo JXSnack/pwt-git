@@ -291,6 +291,10 @@ a:active {
     height: 90vh;
 }
 
+#slideImage img {
+    height: 90vh;
+}
+
 @keyframes popin {
     from {
         right: 30px;
