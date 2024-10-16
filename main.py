@@ -48,7 +48,7 @@ def index():
         username = request.form.get("username")
         username = ' '.join(username.split())
 
-        if not re.compile("^([a-zA-Z0-9_\- :()])*$").match(username):
+        if not re.compile("^([a-zA-Z0-9_\\- :()])*$").match(username):
             return render_template("index.html", illegal=True, exists=False, globals=Globals)
 
         if helper.check_dict_case_insensitive(Globals.user_data, username):
