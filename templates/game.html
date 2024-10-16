@@ -197,12 +197,48 @@
             }
         });
 
+        // Add touchscreen support for drawing
+        canvas.addEventListener('touchstart', startDrawingTouch);
+        canvas.addEventListener('touchend', stopDrawingTouch);
+        canvas.addEventListener('touchmove', drawTouch);
+
         canvas.addEventListener('mousedown', () => drawing = true);
         window.addEventListener('mouseup', () => {
             drawing = false;
             ctx.beginPath();
         });
         canvas.addEventListener('mousemove', draw);
+
+        // Touch event handlers
+        function startDrawingTouch(event) {
+            drawing = true;
+            const touch = event.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            event.preventDefault();  // Prevent scrolling on touch
+        }
+
+        function stopDrawingTouch(event) {
+            drawing = false;
+            ctx.beginPath();
+            event.preventDefault();
+        }
+
+        function drawTouch(event) {
+            if (!drawing) return;
+            const touch = event.touches[0];
+            const rect = canvas.getBoundingClientRect();
+
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = brushSize * 2;
+            ctx.lineCap = 'round';
+
+            ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            event.preventDefault();
+        }
 
         document.getElementById('colorPicker').addEventListener('change', function () {
             currentColor = this.value;
