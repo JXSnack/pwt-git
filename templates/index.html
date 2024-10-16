@@ -4,6 +4,9 @@
 {% if exists %}
 <p style="margin-bottom: 10px;">The username you picked is already in use</p>
 {% endif %}
+{% if illegal %}
+<p style="margin-bottom: 10px">Only a-Z, 0-9, dot, underscore, dashes and spaces are allowed</p>
+{% endif %}
 
 <form method="post" style="display: flex; flex-direction: column; gap: 10px;">
     <input name="username" type="text" placeholder="Username">
