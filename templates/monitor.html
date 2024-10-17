@@ -33,7 +33,7 @@
             ratingSectionImages.innerHTML = "";
 
             for (let user of data['users']) {
-                ratingSectionImages.innerHTML += `<img draggable=false src='/drawing/${user}?t=${Date.now()}'/><a onclick='kick("${user}")' href='#'><div style='flex-direction: row'>Kick user</a><button>1/3</button><button>2/3</button><button>3/3</button></div><hr/>`
+                ratingSectionImages.innerHTML += `<div id="rating-${user}"><img draggable=false src='/drawing/${user}?t=${Date.now()}'/><a onclick='kick("${user}")' href='#'><div style='flex-direction: row'>Kick user</a><button onclick="submitRating(1, '${user}')">1/3</button><button onclick="submitRating(2, '${user}')">2/3</button><button onclick="submitRating(3, '${user}')">3/3</button></div><hr/></div>`
             }
         });
 
@@ -50,6 +50,14 @@
         socket.on('identify', async (data) => {
             await addClient(data['username']);
         });
+
+        socket.on('monitor_remove_rating', (user) => {
+            document.getElementById(`rating-${user}`).remove();
+        });
+
+        async function submitRating(rating, user) {
+            socket.emit('admin_rating', {"username": user, "rating": rating});
+        }
 
         async function addClient(username) {
             let clientElement = document.createElement('p');

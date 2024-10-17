@@ -257,5 +257,19 @@ def io_set_already_begun(state: bool):
     Globals.actually_started = state
 
 
+@socketio.on("admin_rating")
+def io_admin_rating(data):
+    username = data['username']
+    rating = data['rating']
+
+    if Globals.game_data["ratings"].get(username) is None:
+        print("\033[1;31m;[F] uh oh. rating for unknown user (admin)\033[0m")
+        return
+
+    Globals.game_data['ratings'][username]['fav'] += rating
+    print(f"\033[1;32m[MONITOR] Got admin rating for {username}\033[0m")
+    emit("monitor_remove_rating", username)
+
+
 if __name__ == "__main__":
     socketio.run(app, allow_unsafe_werkzeug=True, debug=True)
