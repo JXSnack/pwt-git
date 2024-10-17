@@ -41,6 +41,9 @@ def _index():
 
 @app.route("/game", methods=["GET", "POST"])
 def index():
+    if request.args.get('t') == 'k':
+        return render_template("kicked.html", globals=Globals)
+
     if Globals.actually_started:
         return render_template("already_begun.html")
 
@@ -59,7 +62,7 @@ def index():
 
         Globals.user_data[username] = {"type": "user", "username": username}
         return render_template("game.html", globals=Globals, username=username)
-    return render_template("index.html" if request.args.get('t') != 'k' else "kicked.html", exists=False, illegal=False, globals=Globals)
+    return render_template("index.html", exists=False, illegal=False, globals=Globals)
 
 
 @app.route("/admin")
